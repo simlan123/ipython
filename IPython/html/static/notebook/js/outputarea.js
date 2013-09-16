@@ -628,7 +628,7 @@ var IPython = (function (IPython) {
             that.clear_out_timeout = null;
             that._clear_stdout = that._clear_stderr = that._clear_other = null;
             that.clear_output_callback(stdout, stderr, other);
-        }, 500
+        }, 10
         );
     };
 

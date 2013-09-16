@@ -230,6 +230,70 @@ var IPython = (function (IPython) {
     };
 
 
+    CodeCell.prototype.enable_live_mode = function () {
+        var that = this;
+
+
+        this.code_mirror.on('keydown', function (cm, event) {
+            if (event.keyCode === 18) {
+                var text = cm.getSelection();
+                if (!text) {return;}
+                var initial = parseInt(text);
+                if (!isNaN(initial)) {
+                    var range = $('<input/>').
+                        attr('type', 'range').attr('value', initial).
+                        attr('min', -initial).attr('max', 3*initial).
+                        attr('step', 1);
+                    range.on('change', function () {
+                        cm.replaceSelection($(this).val());
+                    });
+                    var range_cont = $('<div/>').addClass('range-widget').
+                        append($('<i/>').addClass('icon-remove').click(function () {
+                            $(this).parent().remove();
+                            cm.focus();
+                        })).
+                        append(range);
+                    that.element.append(range_cont);
+                    that.element.css('position', 'relative');
+                    var cc = cm.cursorCoords(true);
+                    var pos = that.element.offset();
+                    console.log(cc);
+                    console.log(pos)
+                    console.log(range_cont.width());
+                    var base_width = range.outerWidth() + 24;
+                    range_cont.width(base_width)
+                    var left = cc.left-pos.left-base_width/2;
+                    var top = cc.top-pos.top-32;
+                    console.log('left',left);
+                    console.log('top',top);
+                    range_cont.css('position', 'absolute').
+                        css('z-index', '2').
+                        css('left', left).
+                        css('top', top).
+                        css('padding', '3px').
+                        css('background-color', 'white').
+                        addClass('ui-widget-content').
+                        addClass('corner-all');
+                    range_cont.on('keyup', function (event) {
+                        console.log(event);
+                    })
+                }
+            }
+
+        });
+
+        // CodeMirror.keyMap["default"]["Ctrl-Space"] = "range_widget";
+        this.code_mirror.on("change", function (dm, changeObj) {
+            that.execute();
+        });
+    }
+    
+    
+    CodeCell.prototype.disable_live_mode = function () {
+        this.code_mirror.off("change");
+    }
+
+
     // Kernel related calls.
 
     CodeCell.prototype.set_kernel = function (kernel) {
@@ -251,7 +315,8 @@ var IPython = (function (IPython) {
             'set_next_input': $.proxy(this._handle_set_next_input, this),
             'input_request': $.proxy(this._handle_input_request, this)
         };
-        var msg_id = this.kernel.execute(this.get_text(), callbacks, {silent: false, store_history: true});
+        var text = this.get_text();
+        var msg_id = this.kernel.execute(text, callbacks, {silent: false, store_history: true});
     };
 
     /**
