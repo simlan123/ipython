@@ -1922,8 +1922,25 @@ var IPython = (function (IPython) {
             this.notebook_path,
             this.notebook_name
         );
+        this.start_spinning();
         $.ajax(url, settings);
     };
+
+    Notebook.prototype.start_spinning = function () {
+        var i_h = 28; // icon height
+        var h = $('div#notebook').outerHeight()/3.0 - i_h/2.0; // 1/3 of the way down
+        console.log(h);
+        $('div#notebook').prepend(
+            $('<div/>').append(
+                $('<i/>').addClass('icon-spin icon-spinner')
+            ).css('text-align','center').width('100%').css('font-size', i_h+'px')
+            .css('padding-top', h+'px').attr('id', 'notebook_spinner')
+        );
+    }
+
+    Notebook.prototype.stop_spinning = function () {
+        $('div#notebook_spinner').remove();
+    }
 
     /**
      * Success callback for loading a notebook from the server.
@@ -1936,6 +1953,7 @@ var IPython = (function (IPython) {
      * @param {jqXHR} xhr jQuery Ajax object
      */
     Notebook.prototype.load_notebook_success = function (data, status, xhr) {
+        this.stop_spinning();
         this.fromJSON(data);
         if (this.ncells() === 0) {
             this.insert_cell_below('code');
@@ -2009,6 +2027,7 @@ var IPython = (function (IPython) {
      * @param {String} error HTTP error message
      */
     Notebook.prototype.load_notebook_error = function (xhr, status, error) {
+        this.stop_spinning();
         $([IPython.events]).trigger('notebook_load_failed.Notebook', [xhr, status, error]);
         if (xhr.status === 400) {
             var msg = error;
