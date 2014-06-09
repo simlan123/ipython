@@ -463,6 +463,7 @@ var IPython = (function (IPython) {
         this.edit_shortcuts = new ShortcutManager();
         this.edit_shortcuts.add_shortcuts(default_common_shortcuts);
         this.edit_shortcuts.add_shortcuts(default_edit_shortcuts);
+        this._last_time = Date.now();
     };
 
     KeyboardManager.prototype.bind_events = function () {
@@ -479,6 +480,17 @@ var IPython = (function (IPython) {
             // Intercept escape at highest level to avoid closing
             // websocket connection with firefox
             event.preventDefault();
+        }
+        
+        // Trigger events for keyboard actions that allow extensions to gather UI related data
+        var sc = IPython.keyboard.event_to_shortcut(event);
+        if (sc !== 'shift' && sc !== 'ctrl' && sc !== 'alt' && sc !== 'meta') {
+            var now = Date.now();
+            var deltat = (now - this._last_time)/1000;
+            this._last_time = now;
+            $([IPython.events]).trigger('shortcut.KeyboardManager',
+                {shortcut:sc,deltat:deltat,mode:this.mode}
+            );
         }
         
         if (!this.enabled) {
