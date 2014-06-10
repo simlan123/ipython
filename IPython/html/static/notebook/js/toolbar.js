@@ -98,9 +98,6 @@ var IPython = (function (IPython) {
      */
     ToolBar.prototype.toggle = function () {
         this.element.toggle();
-        if (IPython.layout_manager !== undefined) {
-            IPython.layout_manager.do_resize();
-        }
     };
 
 

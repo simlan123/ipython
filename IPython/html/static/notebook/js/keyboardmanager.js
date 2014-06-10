@@ -437,14 +437,6 @@ var IPython = (function (IPython) {
                 return false;
             }
         },
-        'q' : {
-            help    : 'close pager',
-            help_index : 'gd',
-            handler : function (event) {
-                IPython.pager.collapse();
-                return false;
-            }
-        },
     };
 
 

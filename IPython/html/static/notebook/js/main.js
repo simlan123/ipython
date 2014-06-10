@@ -54,8 +54,6 @@ function (marked) {
     };
 
     IPython.page = new IPython.Page();
-    IPython.layout_manager = new IPython.LayoutManager();
-    IPython.pager = new IPython.Pager('div#pager', 'div#pager_splitter');
     IPython.quick_help = new IPython.QuickHelp();
     try {
         IPython.tour = new IPython.NotebookTour();
@@ -72,8 +70,6 @@ function (marked) {
     IPython.notification_area = new IPython.NotificationArea('#notification_area');
     IPython.notification_area.init_notification_widgets();
 
-    IPython.layout_manager.do_resize();
-
     $('body').append('<div id="fonttest"><pre><span id="test1">x</span>'+
                      '<span id="test2" style="font-weight: bold;">x</span>'+
                      '<span id="test3" style="font-style: italic;">x</span></pre></div>');
@@ -87,9 +83,7 @@ function (marked) {
 
     IPython.page.show();
 
-    IPython.layout_manager.do_resize();
     var first_load = function () {
-        IPython.layout_manager.do_resize();
         var hash = document.location.hash;
         if (hash) {
             document.location.hash = '';

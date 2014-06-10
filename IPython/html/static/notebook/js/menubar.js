@@ -190,11 +190,9 @@ var IPython = (function (IPython) {
         // View
         this.element.find('#toggle_header').click(function () {
             $('div#header').toggle();
-            IPython.layout_manager.do_resize();
         });
         this.element.find('#toggle_toolbar').click(function () {
             $('div#maintoolbar').toggle();
-            IPython.layout_manager.do_resize();
         });
         // Insert
         this.element.find('#insert_cell_above').click(function () {
