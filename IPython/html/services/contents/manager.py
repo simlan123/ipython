@@ -124,6 +124,9 @@ class ContentsManager(LoggingConfigurable):
         """
         raise NotImplementedError('must be implemented in a subclass')
 
+    def file_writable(self, name, path=''):
+        raise NotImplementedError('must be implemented in a subclass')
+
     def exists(self, name, path=''):
         """Does a file or directory exist at the given name and path?
 

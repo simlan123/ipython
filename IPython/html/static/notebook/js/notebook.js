@@ -1828,6 +1828,7 @@ define([
         // Save the metadata and name.
         this.metadata = content.metadata;
         this.notebook_name = data.name;
+        this.writable = data.writable;
         var trusted = true;
         
         // Trigger an event changing the kernel spec - this will set the default

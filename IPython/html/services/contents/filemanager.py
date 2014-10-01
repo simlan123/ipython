@@ -141,6 +141,11 @@ class FileContentsManager(ContentsManager):
         nbpath = self._get_os_path(name, path=path)
         return os.path.isfile(nbpath)
 
+    def file_writable(self, name, path=''):
+        path = path.strip('/')
+        os_path = self._get_os_path(name, path=path)
+        return os.access(os_path, os.W_OK)
+
     def exists(self, name=None, path=''):
         """Returns True if the path [and name] exists, else returns False.
 
@@ -226,8 +231,9 @@ class FileContentsManager(ContentsManager):
         """
         model = self._base_model(name, path)
         model['type'] = 'file'
+        os_path = self._get_os_path(name, path)
+        model['writable'] = self.file_writable(name, path)
         if content:
-            os_path = self._get_os_path(name, path)
             with io.open(os_path, 'rb') as f:
                 bcontent = f.read()
             try:
@@ -248,8 +254,9 @@ class FileContentsManager(ContentsManager):
         """
         model = self._base_model(name, path)
         model['type'] = 'notebook'
+        os_path = self._get_os_path(name, path)
+        model['writable'] = self.file_writable(name, path)
         if content:
-            os_path = self._get_os_path(name, path)
             with io.open(os_path, 'r', encoding='utf-8') as f:
                 try:
                     nb = current.read(f, u'json')
