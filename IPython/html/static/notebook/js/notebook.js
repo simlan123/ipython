@@ -2341,8 +2341,18 @@ define([
         }
 
         // now that we're fully loaded, it is safe to restore save functionality
-        delete(this.save_notebook);
+        if (this.writable) {
+            delete(this.save_notebook);
+        } else {
+            this.events.trigger('not_writable.Notebook');
+            this.save_notebook = function() { // don't allow save until notebook_loaded
+                this.save_notebook_error(null, null, "Read only");
+            };
+        }
         this.events.trigger('notebook_loaded.Notebook');
+        if (!this.writable) {
+            this.save_notebook_error(null, null, "Read only");
+        }
     };
 
     /**
